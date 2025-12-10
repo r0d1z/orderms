@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import rodrgq.listener.dto.OrderCreatedEvent;
+import rodrgq.services.OrderService;
 
 @ApplicationScoped
 public class OrderCreatedListener {
@@ -22,8 +23,12 @@ public class OrderCreatedListener {
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    OrderService orderService;
+
     @Incoming("orders")
     public CompletionStage<Void> onOrderCreated(Message<byte[]> message) {
+        
         try {
             OrderCreatedEvent eventPayload = objectMapper.readValue(message.getPayload(), OrderCreatedEvent.class);
 
@@ -32,11 +37,14 @@ public class OrderCreatedListener {
                     eventPayload.codigoCliente(),
                     eventPayload.itens().size(),
                     eventPayload.itens().get(0).produto());
+            
+            orderService.save(eventPayload);
+        
         } catch (IOException e) {
             logger.error("Failed to deserialize message", e);
             return message.nack(e);
         }
-        
+
         return message.ack();
     }
 }
