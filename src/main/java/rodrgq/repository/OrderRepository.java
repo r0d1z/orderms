@@ -1,5 +1,12 @@
 package rodrgq.repository;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+
+import static com.mongodb.client.model.Aggregates.*;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Accumulators.*;
+
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,5 +30,20 @@ public class OrderRepository implements PanacheMongoRepository<OrderEntity> {
             (int) query.count(),
             query.pageCount()
         ));
+    }
+
+    public BigDecimal findTotalAmountByCustomerId(Long customerId) {
+        
+        OrderEntity result = mongoCollection().aggregate(Arrays.asList(
+            match(eq("customerId", customerId)), 
+            group(null, sum("total", "$total"))
+        )).first();
+
+        if (result == null) {
+            return BigDecimal.ZERO;
+        }
+
+        // O Mongo retorna BigDecimal como Decimal128
+        return result.total != null ? result.total : BigDecimal.ZERO;
     }
 }
