@@ -1,61 +1,78 @@
-# orderms
+# 🚀 Order Management Service (OrderMS)
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Quarkus](https://img.shields.io/badge/Quarkus-4695EB?style=for-the-badge&logo=quarkus&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+A high-performance, event-driven microservice built with **Quarkus** to handle order processing. This project is a robust solution for the **BTG Pactual Backend Challenge**.
 
-## Running the application in dev mode
+---
 
-You can run your application in dev mode that enables live coding using:
+## 🎯 The Challenge
 
-```shell script
+The goal was to build a system that digests order data, persists it, and allows for efficient querying. You can find the original challenge details [here](https://github.com/buildrun-tech/buildrun-desafio-backend-btg-pactual/blob/main/problem.md).
+
+**Key Features:**
+*   **Event-Driven:** Consumes order events asynchronously via RabbitMQ.
+*   **NoSQL Persistence:** Stores order details efficiently using MongoDB with Panache.
+*   **Aggregation:** Calculates total spend per customer using MongoDB Aggregation Pipelines.
+*   **REST API:** Exposes clean endpoints for data retrieval.
+
+## 🛠️ Tech Stack
+
+*   **Core:** Java 17+, Quarkus (Supersonic Subatomic Java)
+*   **Database:** MongoDB (Panache Repository Pattern)
+*   **Messaging:** RabbitMQ (SmallRye Reactive Messaging)
+*   **Containerization:** Docker & Docker Compose
+
+## ⚡ Quick Start
+
+### Prerequisites
+*   JDK 17+
+*   Docker & Docker Compose
+*   Maven (wrapper included)
+
+### 1. Start Infrastructure
+Spin up MongoDB and RabbitMQ using the provided Docker Compose file:
+```bash
+docker-compose -f local/docker-compose.yaml up -d
+```
+
+### 2. Run the Application
+Run in dev mode for live coding:
+```bash
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+The application will be available at `http://localhost:8080`.
+Access the **Dev UI** at `http://localhost:8080/q/dev/`.
 
-## Packaging and running the application
+## 🔌 API Endpoints
 
-The application can be packaged using:
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/customers/{id}/orders` | List all orders for a specific customer (Paginated) |
+| `GET` | `/customers/{id}/total` | Get total amount spent by a customer (Coming Soon) |
 
-```shell script
+## 📦 Building for Production
+
+**Standard JVM Jar:**
+```bash
 ./mvnw package
 ```
+Produces `quarkus-run.jar` in `target/quarkus-app/`.
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
+**Native Executable (GraalVM):**
+```bash
 ./mvnw package -Dnative
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+## 📚 Reference Documentation
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
+*   [Quarkus - MongoDB with Panache](https://quarkus.io/guides/mongodb-panache)
+*   [Quarkus - RabbitMQ Reference](https://quarkus.io/guides/rabbitmq)
+*   [Quarkus - REST Data](https://quarkus.io/guides/rest)
 
-You can then execute your native executable with: `./target/orderms-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- Messaging - RabbitMQ Connector ([guide](https://quarkus.io/guides/rabbitmq)): Connect to RabbitMQ with Reactive Messaging
-- MongoDB with Panache ([guide](https://quarkus.io/guides/mongodb-panache)): Simplify your persistence code for MongoDB via the active record or the repository pattern
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+---
+*Powered by Quarkus*
